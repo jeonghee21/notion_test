@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Widget</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+        #weather {
+            text-align: center;
+            font-size: 24px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        #weather img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="weather">
+        <div id="location">Loading...</div>
+        <div id="temperature">--°C</div>
+        <img id="icon" src="" alt="Weather icon">
+        <div id="description">Fetching weather data...</div>
+    </div>
+    <script>
+        async function updateWeather() {
+            const apiKey = 'a5d2a89c045a4b1a06e057ad334c6379'; // Replace with your API key
+            const city = 'Seoul'; // Replace with your city
+
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`);
+                const data = await response.json();
+
+                const locationElement = document.getElementById('location');
+                const temperatureElement = document.getElementById('temperature');
+                const iconElement = document.getElementById('icon');
+                const descriptionElement = document.getElementById('description');
+
+                locationElement.textContent = `${data.name}, ${data.sys.country}`;
+                temperatureElement.textContent = `${Math.round(data.main.temp)}°C`;
+                iconElement.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+                descriptionElement.textContent = data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1);
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('weather').textContent = 'Unable to fetch weather data.';
+            }
+        }
+
+        updateWeather(); // Initial call
+        setInterval(updateWeather, 3600000); // Update every hour
+    </script>
+</body>
+</html>
